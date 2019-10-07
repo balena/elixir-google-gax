@@ -102,11 +102,19 @@ defmodule GoogleApi.Gax.ModelBase do
     |> Enum.into(%{})
   end
 
+  def decode([%{__struct__: _} | _] = value, :list, _module) do
+    value
+  end
+
   def decode(value, :list, module) do
     Poison.Decode.transform(value, %{as: [struct(module)]})
   end
 
-  def decode(value, _, module) do
+  def decode(%{__struct__: _} = value, _type, _module) do
+    value
+  end
+
+  def decode(value, _type, module) do
     Poison.Decode.transform(value, %{as: struct(module)})
   end
 
